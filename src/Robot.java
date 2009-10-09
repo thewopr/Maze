@@ -39,8 +39,8 @@ public class Robot {
 	private void loadImages() {
 
 		for (int i = 0; i < 4; i++)
-			robotImages[i] = Toolkit.getDefaultToolkit().createImage(
-					"img/robot" + i + ".gif");
+			robotImages[i] = Toolkit.getDefaultToolkit().getImage(this.getClass().getResource(
+					"img/robot" + i + ".gif"));
 	}
 
 	public Robot(Robot r) {

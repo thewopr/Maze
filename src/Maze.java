@@ -1,32 +1,14 @@
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Image;
-import java.awt.Point;
-import java.awt.Toolkit;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.JarURLConnection;
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
-import java.net.URL;
+import java.io.*;
+import java.net.*;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 import java.util.zip.ZipFile;
 
-import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextPane;
+import javax.swing.*;
 
 public class Maze extends JFrame {
 
@@ -145,8 +127,11 @@ public class Maze extends JFrame {
 	 * robots images
 	 */
 	private void initImages() {
-		wall = Toolkit.getDefaultToolkit().createImage("img/wall.gif");
-		trail = Toolkit.getDefaultToolkit().createImage("img/trail.gif");
+		
+		wall = Toolkit.getDefaultToolkit().getImage(this.getClass().getResource("img/wall.gif"));
+
+		trail = Toolkit.getDefaultToolkit().getImage(this.getClass().getResource("img/trail.gif"));
+
 		floor = (Image) (new BufferedImage(16, 16, BufferedImage.TYPE_INT_RGB));
 		floor.getGraphics().setColor(Color.WHITE);
 		floor.getGraphics().fillRect(0, 0, 16, 16);
@@ -268,7 +253,7 @@ public class Maze extends JFrame {
 		if (args.length > 0)
 			m = new Maze(args[0]);
 		else
-			m = new Maze("maze1.txt");
+			m = new Maze("data/maze1.txt");
 		m.runningMode = Maze.RUNFROMAPPLICATION;
 		m.drawInitialMaze();
 	}
@@ -504,7 +489,7 @@ public class Maze extends JFrame {
 				ZipFile signSudoku;
 
 				URL url = new URL(
-						"jar:file:signedMaze.jar!/META-INF/MANIFEST.MF");
+						"jar:file:Maze.jar!/META-INF/MANIFEST.MF");
 				JarURLConnection jarConnection = (JarURLConnection) url
 						.openConnection();
 
@@ -693,37 +678,23 @@ public class Maze extends JFrame {
 	 */
 	public String getTextFromJar(String jarName, String file)
 			throws MalformedURLException, IOException {
-
 		System.out.println(jarName + "   " + file);
 
-		URL url;
+		String temp = "";
+		String line = "";
 
-		if (runningMode == Maze.RUNFROMAPPLET) {
-			url = new URL("jar:http://" + jarName + "!/" + file);
-		} else {
-			url = new URL("jar:file:" + jarName + "!/" + file);
+		InputStream input =	Maze.class.getResourceAsStream(file);
+		BufferedReader br = new BufferedReader(new InputStreamReader(input));
+
+		
+		while( (line = br.readLine()) != null) {
+				temp = temp + line + "\n";
 		}
 
-		JarURLConnection jarConnection = (JarURLConnection) url
-				.openConnection();
-
-		InputStream input = jarConnection.getInputStream();
-
-		ByteArrayOutputStream output = new ByteArrayOutputStream(1024);
-
-		byte[] buffer = new byte[512];
-
-		int bytes;
-
-		while ((bytes = input.read(buffer)) > 0) {
-			output.write(buffer, 0, bytes);
-		}
-
-		input.close();
+		br.close();		
 		fileLocation = Maze.LOADFROMJAR;
 		reset.setEnabled(true);
-
-		return new String(output.toByteArray());
+		return temp;
 	}
 
 	/**
@@ -738,12 +709,7 @@ public class Maze extends JFrame {
 		String maze = "";
 
 		try {
-			if (runningMode == Maze.RUNFROMAPPLICATION)
-				maze = getTextFromJar("signedMaze.jar", fileName);
-			else
-				maze = getTextFromJar(
-						"http:www.students.bucknell.edu/tak017/Java%20Projects/signedMaze.jar",
-						fileName);
+				maze = getTextFromJar("Maze.jar", fileName);
 		} catch (Exception e) {
 			System.err.println(e.getMessage());
 		}
@@ -751,9 +717,13 @@ public class Maze extends JFrame {
 		this.fileName = fileName;
 
 		parseMaze(maze);
+	
 		initBufferedImage();
+
 		setFrameDimensions();
+
 		centerWindow();
+
 		drawInitialMaze();
 	}
 }
