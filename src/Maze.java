@@ -41,11 +41,8 @@ public class Maze extends JFrame {
 	private int fileLocation = -1;
 
 	static final int LOADFROMJAR = 0;
-
 	static final int LOADFROMFILE = 1;
-
 	static final int RUNFROMAPPLET = 1;
-
 	static final int RUNFROMAPPLICATION = 2;
 
 	private int runningMode;
@@ -53,27 +50,19 @@ public class Maze extends JFrame {
 	private JMenuBar menuBar;
 
 	private JMenu fileMenu;
-
 	private JMenuItem openMenuItem;
-
 	private JMenuItem go;
-
 	private JMenuItem exit;
-
 	private JMenuItem reset;
 
 	private JMenu optionMenu;
-
 	private JMenuItem debugOption;
-
 	private JMenuItem randomR;
 	private JMenuItem rightHandR;
 	private JMenuItem memoryR;
 
 	private JMenu helpMenu;
-
 	private JMenuItem help;
-
 	private JMenuItem about;
 
 	public BufferedImage imgBuffer;
@@ -135,7 +124,7 @@ public class Maze extends JFrame {
 	}
 
 	/**
-	 * Sets the JFrames dimensions to match the
+	 * Sets the JFrames dimensions to match the images dimensions
 	 */
 	private void setFrameDimensions() {
 		setSize(imgBuffer.getWidth() + 10, imgBuffer.getHeight() + 48);
@@ -156,8 +145,8 @@ public class Maze extends JFrame {
 	 * robots images
 	 */
 	private void initImages() {
-		wall = Toolkit.getDefaultToolkit().createImage("wall.gif");
-		trail = Toolkit.getDefaultToolkit().createImage("trail.gif");
+		wall = Toolkit.getDefaultToolkit().createImage("img/wall.gif");
+		trail = Toolkit.getDefaultToolkit().createImage("img/trail.gif");
 		floor = (Image) (new BufferedImage(16, 16, BufferedImage.TYPE_INT_RGB));
 		floor.getGraphics().setColor(Color.WHITE);
 		floor.getGraphics().fillRect(0, 0, 16, 16);
@@ -282,9 +271,6 @@ public class Maze extends JFrame {
 			m = new Maze("maze1.txt");
 		m.runningMode = Maze.RUNFROMAPPLICATION;
 		m.drawInitialMaze();
-//		m.runningMode = Maze.RUNFROMAPPLICATION;
-		// m.rmt = new RunMazeThread(m, 200);
-		// m.rmt.start();
 	}
 
 	/**
@@ -713,7 +699,7 @@ public class Maze extends JFrame {
 		URL url;
 
 		if (runningMode == Maze.RUNFROMAPPLET) {
-			url = new URL("jar:http://" + "!/" + file);
+			url = new URL("jar:http://" + jarName + "!/" + file);
 		} else {
 			url = new URL("jar:file:" + jarName + "!/" + file);
 		}

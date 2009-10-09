@@ -40,7 +40,7 @@ public class Robot {
 
 		for (int i = 0; i < 4; i++)
 			robotImages[i] = Toolkit.getDefaultToolkit().createImage(
-					"robot" + i + ".gif");
+					"img/robot" + i + ".gif");
 	}
 
 	public Robot(Robot r) {
