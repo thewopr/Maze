@@ -6,10 +6,10 @@
     <property name="classes.dir" value="${build.dir}/classes"/>
     <property name="res.dir" 		 value="${src.dir}/resources"/>
     <property name="jar.dir"     value="${build.dir}/jar"/>
-
     <property name="main-class"  value="Maze"/>
 
-
+		<fileset id="board.files" dir="${res.dir}/data"/>
+		<property name="data.list" refid="board.files"/>
 
     <target name="clean">
         <delete dir="${build.dir}"/>
@@ -29,6 +29,7 @@
 						
 						<manifest>
                 <attribute name="Main-Class" value="${main-class}"/>
+                <attribute name="Boards" value="${data.list}"/>
             </manifest>
         </jar>
 

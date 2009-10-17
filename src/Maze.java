@@ -424,8 +424,14 @@ public class Maze extends JFrame {
 		exit = new JMenuItem("Quit");
 		reset = new JMenuItem("Reset Board");
 
+		initOpenMenu();		
+
 		optionMenu = new JMenu("Options");
 		debugOption = new JCheckBoxMenuItem("Enable Debugging");
+		debugOption = new JCheckBoxMenuItem("Enable Debugging");
+		debugOption = new JCheckBoxMenuItem("Enable Debugging");
+		debugOption = new JCheckBoxMenuItem("Enable Debugging");
+
 
 		helpMenu = new JMenu("Help");
 		help = new JMenuItem("Help Contents");
@@ -456,13 +462,7 @@ public class Maze extends JFrame {
 
 				try {
 					ArrayList<String> fileList;
-
-					if (runningMode == Maze.RUNFROMAPPLET) {
-						fileList = extractFileNames();
-					} else {
-						fileList = extractLocalFileNames();
-					}
-
+					fileList = extractFileNames();
 					String s = (String) JOptionPane
 							.showInputDialog(
 									jp,
@@ -470,8 +470,10 @@ public class Maze extends JFrame {
 									"Open Board", JOptionPane.PLAIN_MESSAGE,
 									null, fileList.toArray(), null);
 
+					System.out.println(s);
+
 					if (s != null) {
-						initMaze(s);
+						initMaze("data/" + s);
 					}
 
 				} catch (IOException exe) {
@@ -481,57 +483,28 @@ public class Maze extends JFrame {
 				}
 			}
 
-			private ArrayList<String> extractLocalFileNames()
-					throws IOException, URISyntaxException {
-
-				ArrayList<String> fileList = new ArrayList<String>();
-
-				ZipFile signSudoku;
-
-				URL url = new URL(
-						"jar:file:Maze.jar!/META-INF/MANIFEST.MF");
-				JarURLConnection jarConnection = (JarURLConnection) url
-						.openConnection();
-
-				String manList = loadFromJar((InputStream) jarConnection
-						.getContent());
-
-				StringTokenizer in = new StringTokenizer(manList);
-
-				while (in.hasMoreTokens()) {
-					String s = in.nextToken();
-					if (s.substring(s.length() - 3).equals("txt")
-							&& !s.equals("readme.txt")
-							&& !s.equals("readme2.txt"))
-						fileList.add(s);
-				}
-				return fileList;
-
-			}
-
 			private ArrayList<String> extractFileNames() throws IOException,
 					URISyntaxException {
 
 				ArrayList<String> fileList = new ArrayList<String>();
 
-				ZipFile signSudoku;
+				String manList = getTextFromJar("META-INF/MANIFEST.MF");
+				String[] lines = manList.split("\n");
+				String line = "";
 
-				URL url = new URL(
-						"jar:http://www.students.bucknell.edu/tak017/Java%20Projects/signSudoku.jar!/META-INF/MANIFEST.MF");
-				JarURLConnection jarConnection = (JarURLConnection) url
-						.openConnection();
+				for(String each: lines) {
+					if(each.startsWith("Boards")) {
+						line = each;
+						break;						
+					}
+				}
 
-				String manList = loadFromJar((InputStream) jarConnection
-						.getContent());
+				System.out.println(line);
 
-				StringTokenizer in = new StringTokenizer(manList);
+				StringTokenizer in = new StringTokenizer(line.split(" ")[1], ";");
 
 				while (in.hasMoreTokens()) {
-					String s = in.nextToken();
-					if (s.substring(s.length() - 3).equals("txt")
-							&& !s.equals("readme.txt")
-							&& !s.equals("readme2.txt"))
-						fileList.add(s);
+						fileList.add(in.nextToken());
 				}
 				return fileList;
 			}
@@ -676,16 +649,13 @@ public class Maze extends JFrame {
 	 * @throws MalformedURLException
 	 * @throws IOException
 	 */
-	public String getTextFromJar(String jarName, String file)
+	public String getTextFromJar(String file)
 			throws MalformedURLException, IOException {
-		System.out.println(jarName + "   " + file);
-
 		String temp = "";
 		String line = "";
 
 		InputStream input =	Maze.class.getResourceAsStream(file);
 		BufferedReader br = new BufferedReader(new InputStreamReader(input));
-
 		
 		while( (line = br.readLine()) != null) {
 				temp = temp + line + "\n";
@@ -709,7 +679,7 @@ public class Maze extends JFrame {
 		String maze = "";
 
 		try {
-				maze = getTextFromJar("Maze.jar", fileName);
+				maze = getTextFromJar(fileName);
 		} catch (Exception e) {
 			System.err.println(e.getMessage());
 		}
